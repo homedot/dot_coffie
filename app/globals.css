@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4faf6;
+  --foreground: #2c1c12;
 }
 
 @theme inline {
@@ -10,17 +10,257 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Brand green — primary theme color */
+  --color-brand-50: #eefdf3;
+  --color-brand-100: #d5f7e0;
+  --color-brand-200: #aeedc4;
+  --color-brand-300: #7ddda2;
+  --color-brand-400: #46c17c;
+  --color-brand-500: #22a35f;
+  --color-brand-600: #16824a;
+  --color-brand-700: #14663c;
+  --color-brand-800: #135233;
+  --color-brand-900: #0f432b;
+
+  /* Coffee brown — secondary/accent color */
+  --color-coffee-50: #fbf5ee;
+  --color-coffee-100: #f1e2cf;
+  --color-coffee-200: #e3c6a0;
+  --color-coffee-300: #d0a56f;
+  --color-coffee-400: #b8824a;
+  --color-coffee-500: #96633a;
+  --color-coffee-600: #7a4f30;
+  --color-coffee-700: #5f3e28;
+  --color-coffee-800: #4a3120;
+  --color-coffee-900: #3a2718;
+
+  --color-cream: #fff8ec;
+
+  /* Custom animation utilities: animate-float, animate-fade-up, ... */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pop: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-steam: steam 2.6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-wiggle: wiggle 0.5s ease-in-out;
+  --animate-sun-glow: sun-glow 3.2s ease-in-out infinite;
+  --animate-ray-spin: ray-spin 24s linear infinite;
+  --animate-cloud-drift: cloud-drift 30s linear infinite;
+  --animate-twinkle: twinkle 2.4s ease-in-out infinite;
+  --animate-brew-tilt: brew-tilt 4s ease-in-out infinite;
+  --animate-drip: drip 1.4s cubic-bezier(0.55, 0, 1, 0.45) infinite;
+  --animate-pour-stream: pour-stream 1.4s ease-in infinite;
+  --animate-surface-bob: surface-bob 3s ease-in-out infinite;
+  --animate-card-glow: card-glow 3.5s ease-in-out infinite;
+  --animate-sparkle: sparkle 2.2s ease-in-out infinite;
+  --animate-breathe: breathe 4s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(4deg);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes steam {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-9px) scaleX(1.25);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateY(-18px) scaleX(0.85);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes sun-glow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.9;
+  }
+}
+
+@keyframes ray-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-60px);
+  }
+  to {
+    transform: translateX(460px);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes brew-tilt {
+  0%,
+  100% {
+    transform: rotateY(-10deg) rotateX(4deg);
+  }
+  50% {
+    transform: rotateY(10deg) rotateX(-2deg);
+  }
+}
+
+@keyframes drip {
+  0% {
+    transform: translateY(0) scaleY(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(22px) scaleY(1.3);
+    opacity: 0;
+  }
+}
+
+@keyframes pour-stream {
+  0%,
+  15% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  25%,
+  75% {
+    transform: scaleY(1);
+    opacity: 0.9;
+  }
+  90%,
+  100% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+}
+
+@keyframes surface-bob {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    transform: translateY(-1.5px) scaleX(1.03);
+  }
+}
+
+@keyframes card-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(90deg);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
