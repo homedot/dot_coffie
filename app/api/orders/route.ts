@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAutoClear } from "@/src/lib/autoClear";
 import { connectToDatabase } from "@/src/lib/mongodb";
-import { broadcastOrdersChanged } from "@/src/lib/orderEvents";
 import { toOrder } from "@/src/lib/orderSerializer";
 import Order from "@/src/models/Order";
 import { getSession } from "@/src/lib/auth";
@@ -13,8 +12,7 @@ const SUGAR_LEVELS: SugarLevel[] = ["normal", "low", "without"];
 
 export async function GET() {
   await connectToDatabase();
-  const swept = await runAutoClear();
-  if (swept > 0) broadcastOrdersChanged();
+  await runAutoClear();
   const orders = await Order.find().sort({ createdAt: -1 }).lean();
   return NextResponse.json({ orders: orders.map(toOrder) });
 }
@@ -46,8 +44,7 @@ export async function POST(request: NextRequest) {
   }
 
   await connectToDatabase();
-  const swept = await runAutoClear();
-  if (swept > 0) broadcastOrdersChanged();
+  await runAutoClear();
 
   const existingActiveOrder = await Order.findOne({
     "employee.id": session.id,
@@ -67,7 +64,6 @@ export async function POST(request: NextRequest) {
     status: "pending",
     createdAt: Date.now(),
   });
-  broadcastOrdersChanged();
 
   return NextResponse.json({ order: toOrder(created) }, { status: 201 });
 }
@@ -83,7 +79,6 @@ export async function DELETE() {
 
   await connectToDatabase();
   await Order.deleteMany({});
-  broadcastOrdersChanged();
 
   return NextResponse.json({ ok: true });
 }

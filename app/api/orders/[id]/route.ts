@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/src/lib/mongodb";
-import { broadcastOrdersChanged } from "@/src/lib/orderEvents";
 import { toOrder } from "@/src/lib/orderSerializer";
 import Order from "@/src/models/Order";
 import { getSession } from "@/src/lib/auth";
@@ -30,7 +29,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (!updated) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
-  broadcastOrdersChanged();
 
   return NextResponse.json({ order: toOrder(updated) });
 }

@@ -14,7 +14,6 @@ import { IMAGES } from "@/src/utils/images";
 export default function PantryScreen() {
   const router = useRouter();
   const { employee, orders, clearOrders } = useApp();
-  const [now, setNow] = useState(() => Date.now());
   const [clearing, setClearing] = useState(false);
   const [clearError, setClearError] = useState<string | null>(null);
 
@@ -25,11 +24,6 @@ export default function PantryScreen() {
       router.replace("/order");
     }
   }, [employee, router]);
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30_000);
-    return () => clearInterval(id);
-  }, []);
 
   const sorted = useMemo(() => [...orders].sort((a, b) => b.createdAt - a.createdAt), [orders]);
   const activeCount = orders.filter((o) => o.status !== "served").length;
@@ -116,12 +110,7 @@ export default function PantryScreen() {
             </div>
           ) : (
             sorted.map((order, i) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                now={now}
-                delayMs={Math.min(i, 8) * 60}
-              />
+              <OrderCard key={order.id} order={order} delayMs={Math.min(i, 8) * 60} />
             ))
           )}
         </div>

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { DRINK_OPTIONS, SUGAR_LEVELS } from "@/src/utils/constants";
 import { avatarPalette } from "@/src/utils/colors";
-import { formatTimeAgo } from "@/src/utils/time";
 import type { DrinkType, Order, SugarLevel } from "@/src/utils/types";
 import SugarLevelIcon from "./SugarLevelIcon";
 
@@ -27,17 +26,13 @@ const SUGAR_BANNER_LABELS: Record<SugarLevel, string> = {
   without: "പഞ്ചസാര വേണ്ട",
 };
 
-// The employee photo fills the card like a badge, with a dark scrim behind
-// the name so it stays readable over any photo. Employees without a photo
-// on file get their unique palette gradient instead, so the card still
-// reads as "theirs" at a glance.
+// The employee photo fills the card at full size — staff identify who the
+// order belongs to purely by face and name, nothing else.
 export default function OrderCard({
   order,
-  now,
   delayMs = 0,
 }: {
   order: Order;
-  now: number;
   delayMs?: number;
 }) {
   const drink = DRINK_OPTIONS.find((d) => d.id === order.drink)!;
@@ -50,16 +45,18 @@ export default function OrderCard({
       className="animate-fade-up overflow-hidden rounded-3xl bg-white shadow-md transition-shadow duration-200 hover:shadow-xl"
     >
       <div
-        className={`flex items-center justify-center gap-2 py-3 text-xl font-black uppercase tracking-wide ${DRINK_BANNER_STYLES[drink.id]}`}
+        className={`flex items-center justify-center gap-2 py-2 text-base font-black uppercase tracking-wide sm:py-3 sm:text-xl ${DRINK_BANNER_STYLES[drink.id]}`}
       >
-        <span className="text-2xl">{drink.emoji}</span>
+        <span className="text-xl sm:text-2xl">{drink.emoji}</span>
         {drink.label}
       </div>
 
       <div
-        className={`flex items-center justify-center gap-2 py-2.5 text-3xl font-black uppercase tracking-wide ${SUGAR_BANNER_STYLES[sugar.id]}`}
+        className={`flex items-center justify-center gap-2 py-2 text-center text-base font-black uppercase tracking-wide sm:py-2.5 sm:text-3xl ${SUGAR_BANNER_STYLES[sugar.id]}`}
       >
-        <SugarLevelIcon level={sugar.id} size={15} color="#ffffff" />
+        <span className="scale-75 sm:scale-100">
+          <SugarLevelIcon level={sugar.id} size={15} color="#ffffff" />
+        </span>
         {SUGAR_BANNER_LABELS[sugar.id]}
       </div>
 
@@ -69,7 +66,7 @@ export default function OrderCard({
             src={order.employee.avatarUrl}
             alt={order.employee.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw,360px"
             className="object-cover"
           />
         ) : (
@@ -86,14 +83,8 @@ export default function OrderCard({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-4">
-          <p className="text-lg font-bold text-white drop-shadow">
+          <p className="text-2xl font-black text-white drop-shadow">
             {order.employee.name}
-          </p>
-          <p className="text-sm font-medium text-white/85 drop-shadow">
-            {order.employee.department}
-          </p>
-          <p className="mt-1 text-xs text-white/70">
-            {formatTimeAgo(order.createdAt, now)}
           </p>
         </div>
       </div>
