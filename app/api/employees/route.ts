@@ -33,12 +33,6 @@ function deriveInitials(name: string): string {
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-  if (session.role !== "pantry") {
-    return NextResponse.json({ error: "Only pantry staff can add employees" }, { status: 403 });
-  }
 
   const body = await request.json().catch(() => null);
   const username = str(body?.username).toLowerCase();
@@ -69,6 +63,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: `role must be one of: ${EMPLOYEE_ROLES.join(", ")}` },
       { status: 400 },
+    );
+  }
+
+  if (role === "pantry" && session?.role !== "pantry") {
+    return NextResponse.json(
+      { error: "Only pantry staff can create pantry accounts" },
+      { status: 403 },
     );
   }
 
