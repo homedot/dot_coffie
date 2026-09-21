@@ -41,7 +41,7 @@ export default function SugarSummary({ orders }: { orders: Order[] }) {
         const total = orders.filter((o) => o.drink === drink.id).length;
 
         return (
-          <div key={drink.id} className="rounded-3xl bg-white/90 p-6 shadow-lg">
+          <div key={drink.id} className="rounded-3xl bg-white/90 p-4 shadow-lg sm:p-6">
             <h3 className="flex items-center gap-2 text-3xl font-extrabold text-coffee-800">
               <span className="text-3xl">{drink.emoji}</span> {drink.label}
             </h3>
@@ -53,7 +53,7 @@ export default function SugarSummary({ orders }: { orders: Order[] }) {
               <span className="text-7xl font-black leading-none">{total}</span>
             </div>
 
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
               {SUGAR_LEVELS.map((level) => {
                 const count = orders.filter(
                   (o) => o.drink === drink.id && o.sugar === level.id,
@@ -61,13 +61,13 @@ export default function SugarSummary({ orders }: { orders: Order[] }) {
                 return (
                   <div
                     key={level.id}
-                    className={`flex flex-col items-center gap-2 rounded-2xl border-2 py-5 ${TILE_STYLES[level.id]}`}
+                    className={`flex min-w-0 flex-col items-center gap-2 rounded-2xl border-2 px-1 py-5 ${TILE_STYLES[level.id]}`}
                   >
                     <SugarLevelIcon level={level.id} size={12} />
                     <span className={`text-6xl font-black leading-none ${COUNT_STYLES[level.id]}`}>
                       {count}
                     </span>
-                    <span className="text-center text-2xl font-bold leading-tight text-coffee-700">
+                    <span className="max-w-full break-words text-center text-sm font-bold leading-tight text-coffee-700 sm:text-2xl">
                       {TILE_LABELS[level.id]}
                     </span>
                   </div>
