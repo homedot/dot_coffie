@@ -71,7 +71,7 @@ export default function OrderCard({
         <p className="mt-2 truncate pr-24 text-2xl font-black leading-tight text-coffee-900">
           {drink.label}
         </p>
-        <p className="whitespace-nowrap text-3xl font-medium leading-tight text-coffee-800">
+        <p className="break-words text-3xl font-medium leading-tight text-coffee-800">
           ({SUGAR_LABELS_ML[sugar.id]})
         </p>
       </div>
