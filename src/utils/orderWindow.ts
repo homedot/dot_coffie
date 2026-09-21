@@ -1,7 +1,7 @@
 // Feature flag for the ordering time-window restriction below. Flip to
 // false to let employees order any time — e.g. while this feature is
 // still being tuned — without removing the rest of the logic.
-export const ORDER_WINDOW_RESTRICTION_ENABLED = false;
+export const ORDER_WINDOW_RESTRICTION_ENABLED = true;
 
 interface TimeOfDay {
   hour: number;
@@ -76,10 +76,13 @@ export function getLabeledOrderWindows(): {
 // Which labeled window (if any) a given moment falls into — used to greet
 // an order by "morning"/"evening" based on when it was actually placed,
 // not the current time (those can differ once brewing takes a few minutes).
-export function getOrderWindowFor(date: Date): { label: string; emoji: string } | null {
+export function getOrderWindowFor(
+  date: Date,
+): { label: string; emoji: string } | null {
   const minutes = minutesSinceMidnight(date);
   const match = ORDER_WINDOWS.find(
-    (window) => minutes >= toMinutes(window.start) && minutes <= toMinutes(window.end),
+    (window) =>
+      minutes >= toMinutes(window.start) && minutes <= toMinutes(window.end),
   );
   return match ? { label: match.label, emoji: match.emoji } : null;
 }
@@ -95,7 +98,9 @@ export const AUTO_CLEAR_CHECKPOINTS: TimeOfDay[] = [
 
 // The most recent checkpoint that has already passed today, as a
 // millisecond timestamp — or null if none have passed yet.
-export function getLastPassedCheckpoint(date: Date = new Date()): number | null {
+export function getLastPassedCheckpoint(
+  date: Date = new Date(),
+): number | null {
   const startOfDay = new Date(date);
   startOfDay.setHours(0, 0, 0, 0);
 
