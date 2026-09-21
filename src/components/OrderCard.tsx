@@ -1,38 +1,25 @@
 import Image from "next/image";
 import { DRINK_OPTIONS, SUGAR_LEVELS } from "@/src/utils/constants";
 import { avatarPalette } from "@/src/utils/colors";
-import type { DrinkType, Order, SugarLevel } from "@/src/utils/types";
-import SugarLevelIcon from "./SugarLevelIcon";
-
-const DRINK_BANNER_STYLES: Record<DrinkType, string> = {
-  coffee: "bg-gradient-to-r from-coffee-600 to-coffee-800 text-cream",
-  tea: "bg-gradient-to-r from-brand-500 to-brand-700 text-cream",
-};
-
-// Solid, high-contrast bars (not soft tints) so the sugar level is legible
-// at a glance — the same color language as SugarSummary's tiles, just
-// turned up for a busy pantry counter.
-const SUGAR_BANNER_STYLES: Record<SugarLevel, string> = {
-  normal: "bg-brand-600 text-white",
-  low: "bg-amber-500 text-white",
-  without: "bg-rose-600 text-white",
-};
+import type { Order, SugarLevel } from "@/src/utils/types";
 
 // Pantry-only label override — OrderScreen keeps using SUGAR_LEVELS' own
 // labels for its sugar picker, unaffected by this.
-const SUGAR_BANNER_LABELS: Record<SugarLevel, string> = {
-  normal: "പഞ്ചസാര",
+const SUGAR_LABELS_ML: Record<SugarLevel, string> = {
+  normal: "സാധാരണ പഞ്ചസാര",
   low: "കുറച്ച് പഞ്ചസാര",
   without: "പഞ്ചസാര വേണ്ട",
 };
 
-// The employee photo fills the card at full size — staff identify who the
-// order belongs to purely by face and name, nothing else.
+// One order per row: numbered avatar on the left, with the employee name
+// and the drink/sugar line stacked underneath it as a single text block.
 export default function OrderCard({
   order,
+  index,
   delayMs = 0,
 }: {
   order: Order;
+  index: number;
   delayMs?: number;
 }) {
   const drink = DRINK_OPTIONS.find((d) => d.id === order.drink)!;
@@ -42,51 +29,51 @@ export default function OrderCard({
   return (
     <div
       style={{ animationDelay: `${delayMs}ms` }}
-      className="animate-fade-up overflow-hidden rounded-3xl bg-white shadow-md transition-shadow duration-200 hover:shadow-xl"
+      className="animate-fade-up relative flex items-center gap-6 rounded-3xl bg-white p-2.5 shadow-md transition-shadow duration-200 hover:shadow-xl"
     >
-      <div
-        className={`flex items-center justify-center gap-2 py-2 text-base font-black uppercase tracking-wide sm:py-3 sm:text-xl ${DRINK_BANNER_STYLES[drink.id]}`}
-      >
-        <span className="text-xl sm:text-2xl">{drink.emoji}</span>
-        {drink.label}
-      </div>
+      <span className="absolute right-3 top-3 text-8xl leading-none">
+        {drink.emoji}
+      </span>
 
-      <div
-        className={`flex items-center justify-center gap-2 py-2 text-center text-base font-black uppercase tracking-wide sm:py-2.5 sm:text-3xl ${SUGAR_BANNER_STYLES[sugar.id]}`}
-      >
-        <span className="scale-75 sm:scale-100">
-          <SugarLevelIcon level={sugar.id} size={15} color="#ffffff" />
-        </span>
-        {SUGAR_BANNER_LABELS[sugar.id]}
-      </div>
-
-      <div className="relative aspect-square w-full">
-        {order.employee.avatarUrl ? (
-          <Image
-            src={order.employee.avatarUrl}
-            alt={order.employee.name}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw,360px"
-            className="object-cover"
-          />
-        ) : (
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{
-              background: `linear-gradient(135deg, ${palette.from}, ${palette.to})`,
-            }}
-          >
-            <span className="text-8xl font-black text-white/25">
-              {order.employee.initials}
-            </span>
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 p-4">
-          <p className="text-2xl font-black text-white drop-shadow">
-            {order.employee.name}
-          </p>
+      <div className="relative h-56 w-56 shrink-0">
+        {/* <span className="absolute -left-3 -top-3 z-10 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-2xl font-bold text-white ring-2 ring-white">
+          {index}
+        </span> */}
+        <div className="h-full w-full overflow-hidden rounded-full">
+          {order.employee.avatarUrl ? (
+            <Image
+              src={order.employee.avatarUrl}
+              alt={order.employee.name}
+              fill
+              sizes="224px"
+              className="object-cover"
+         
+            />
+          ) : (
+            <div
+              className="flex h-full w-full items-center justify-center"
+              style={{
+                background: `linear-gradient(135deg, ${palette.from}, ${palette.to})`,
+              }}
+            >
+              <span className="text-5xl font-black text-white">
+                {order.employee.initials}
+              </span>
+            </div>
+          )}
         </div>
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate pr-24 text-3xl font-bold text-coffee-900">
+          {order.employee.name}
+        </p>
+        <p className="mt-2 truncate pr-24 text-2xl font-black leading-tight text-coffee-900">
+          {drink.label}
+        </p>
+        <p className="whitespace-nowrap text-3xl font-medium leading-tight text-coffee-800">
+          ({SUGAR_LABELS_ML[sugar.id]})
+        </p>
       </div>
     </div>
   );

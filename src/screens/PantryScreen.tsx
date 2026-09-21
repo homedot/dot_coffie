@@ -100,7 +100,7 @@ export default function PantryScreen() {
           </p>
         )}
 
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {sorted.length === 0 ? (
             <div className="col-span-full flex flex-col items-center gap-3 rounded-3xl bg-white/70 py-16 text-center">
               <span className="animate-float text-5xl">☕</span>
@@ -110,7 +110,12 @@ export default function PantryScreen() {
             </div>
           ) : (
             sorted.map((order, i) => (
-              <OrderCard key={order.id} order={order} delayMs={Math.min(i, 8) * 60} />
+              <OrderCard
+                key={order.id}
+                order={order}
+                index={i + 1}
+                delayMs={Math.min(i, 8) * 60}
+              />
             ))
           )}
         </div>
