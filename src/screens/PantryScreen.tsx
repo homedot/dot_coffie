@@ -9,6 +9,7 @@ import NavBar from "@/src/components/NavBar";
 import OrderCard from "@/src/components/OrderCard";
 import SugarSummary from "@/src/components/SugarSummary";
 import { useApp } from "@/src/context/AppContext";
+import { groupOrdersByFloor } from "@/src/utils/floors";
 import { IMAGES } from "@/src/utils/images";
 
 export default function PantryScreen() {
@@ -26,9 +27,12 @@ export default function PantryScreen() {
   }, [employee, router]);
 
   const sorted = useMemo(() => [...orders].sort((a, b) => b.createdAt - a.createdAt), [orders]);
+  const floors = useMemo(() => groupOrdersByFloor(sorted), [sorted]);
   const activeCount = orders.filter((o) => o.status !== "served").length;
 
   if (!employee || employee.role !== "pantry") return null;
+
+  let cardIndex = 0;
 
   async function handleClear() {
     if (!window.confirm("Clear the order board? This marks every order handled and lets everyone place a new one.")) {
@@ -100,25 +104,53 @@ export default function PantryScreen() {
           </p>
         )}
 
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {sorted.length === 0 ? (
-            <div className="col-span-full flex flex-col items-center gap-3 rounded-3xl bg-white/70 py-16 text-center">
-              <span className="animate-float text-5xl">☕</span>
-              <p className="text-lg font-semibold text-coffee-700">
-                No orders yet — enjoy the quiet before the rush.
-              </p>
-            </div>
-          ) : (
-            sorted.map((order, i) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                index={i + 1}
-                delayMs={Math.min(i, 8) * 60}
-              />
-            ))
-          )}
-        </div>
+        {sorted.length === 0 ? (
+          <div className="mt-6 flex flex-col items-center gap-3 rounded-3xl bg-white/70 py-16 text-center">
+            <span className="animate-float text-5xl">☕</span>
+            <p className="text-lg font-semibold text-coffee-700">
+              No orders yet — enjoy the quiet before the rush.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 flex flex-col gap-10">
+            {floors.map((floor) => (
+              <section key={floor.id} aria-label={floor.label}>
+                <div className="flex items-center justify-between rounded-2xl bg-coffee-800 px-5 py-3 text-cream shadow">
+                  <h2 className="text-xl font-extrabold sm:text-2xl">
+                    {floor.emoji} {floor.label}
+                  </h2>
+                  <span className="rounded-full bg-brand-600 px-3 py-1 text-sm font-bold">
+                    {floor.total} {floor.total === 1 ? "order" : "orders"}
+                  </span>
+                </div>
+
+                <div className="mt-5 flex flex-col gap-8">
+                  {floor.departments.map((group) => (
+                    <div key={group.department}>
+                      <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-coffee-800 sm:text-xl">
+                        <span className="h-6 w-1.5 rounded-full bg-brand-600" />
+                        {group.department}
+                        <span className="rounded-full bg-white/80 px-2.5 py-0.5 text-sm font-semibold text-coffee-700">
+                          {group.orders.length}
+                        </span>
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {group.orders.map((order) => (
+                          <OrderCard
+                            key={order.id}
+                            order={order}
+                            index={++cardIndex}
+                            delayMs={Math.min(cardIndex, 8) * 60}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

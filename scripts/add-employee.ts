@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { config } from "dotenv";
 import { connectToDatabase } from "@/src/lib/mongodb";
 import User from "@/src/models/User";
+import { DEPARTMENTS, FLOORS, canonicalDepartment } from "@/src/utils/floors";
 import type { AvatarPalette, EmployeeRole } from "@/src/utils/types";
 
 config({ path: ".env.local" });
@@ -28,16 +29,24 @@ async function main() {
   const username = arg("username");
   const password = arg("password");
   const name = arg("name");
-  const department = arg("department");
+  const departmentArg = arg("department");
   const initials = arg("initials");
   const palette = (arg("palette") ?? "brand") as AvatarPalette;
   const avatarUrl = arg("avatarUrl");
   const role = (arg("role") ?? "employee") as EmployeeRole;
 
-  if (!username || !password || !name || !department || !initials) {
+  if (!username || !password || !name || !departmentArg || !initials) {
     console.error(
-      'Usage: tsx scripts/add-employee.ts --username=<u> --password=<p> --name="<n>" --department="<d>" --initials=<ab> [--palette=brand] [--avatarUrl=/employees/photo.jpg] [--role=employee|pantry]',
+      `Usage: tsx scripts/add-employee.ts --username=<u> --password=<p> --name="<n>" --department="<d>" --initials=<ab> [--palette=brand] [--avatarUrl=/employees/photo.jpg] [--role=employee|pantry]\n` +
+        `Departments: ${DEPARTMENTS.join(", ")}`,
     );
+    process.exit(1);
+  }
+  // Pantry staff aren't on a floor, so any label is fine for them; everyone
+  // else must be in a known department so the pantry board can place them.
+  const department = canonicalDepartment(departmentArg) ?? (role === "pantry" ? departmentArg : undefined);
+  if (!department) {
+    console.error(`--department must be one of: ${DEPARTMENTS.join(", ")}`);
     process.exit(1);
   }
   if (!AVATAR_PALETTES.includes(palette)) {
@@ -58,7 +67,10 @@ async function main() {
     { upsert: true, returnDocument: "after" },
   );
 
-  console.log(`Saved employee "${user.name}" (username: ${user.username}, role: ${user.role})`);
+  const floor = FLOORS.find((f) => f.departments.includes(user.department));
+  console.log(
+    `Saved employee "${user.name}" (username: ${user.username}, role: ${user.role}, department: ${user.department}${floor ? `, ${floor.label}` : ""})`,
+  );
   process.exit(0);
 }
 
