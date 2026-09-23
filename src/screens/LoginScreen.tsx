@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import BeansBackground from "@/src/components/BeansBackground";
 import Button from "@/src/components/Button";
+import PasswordVisibilityIcon from "@/src/components/PasswordVisibilityIcon";
 import { useApp } from "@/src/context/AppContext";
 import { IMAGES } from "@/src/utils/images";
 import type { Employee } from "@/src/utils/types";
@@ -18,6 +19,7 @@ export default function LoginScreen() {
   const { employee, loading, login } = useApp();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -87,15 +89,25 @@ export default function LoginScreen() {
 
           <label className="flex flex-col gap-1.5 text-sm font-semibold text-coffee-800">
             Password
-            <input
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="rounded-xl border border-coffee-200 bg-white px-4 py-2.5 font-normal text-coffee-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full rounded-xl border border-coffee-200 bg-white px-4 py-2.5 pr-11 font-normal text-coffee-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-coffee-500 hover:text-coffee-800"
+              >
+                <PasswordVisibilityIcon visible={showPassword} />
+              </button>
+            </div>
           </label>
 
           {error && (
