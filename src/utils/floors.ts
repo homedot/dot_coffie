@@ -14,13 +14,13 @@ export const FLOORS: Floor[] = [
     id: "ground",
     label: "Ground Floor",
     emoji: "🏢",
-    departments: ["Accountant", "Front Office", "HR"],
+    departments: ["MD", "Accountant", "Front Office", "HR"],
   },
   {
     id: "first",
     label: "First Floor",
     emoji: "🏬",
-    departments: ["HomeDot", "HomeTech"],
+    departments: ["HomeTech", "HomeDot"],
   },
 ];
 
@@ -55,7 +55,8 @@ export function groupOrdersByFloor(orders: Order[]): FloorGroup[] {
   for (const order of orders) {
     const canonical = canonicalDepartment(order.employee.department);
     const bucket = canonical ? known : other;
-    const key = canonical ?? (order.employee.department.trim() || "No department");
+    const key =
+      canonical ?? (order.employee.department.trim() || "No department");
     const list = bucket.get(key);
     if (list) list.push(order);
     else bucket.set(key, [order]);
@@ -78,7 +79,10 @@ export function groupOrdersByFloor(orders: Order[]): FloorGroup[] {
   }
 
   if (other.size > 0) {
-    const departments = [...other].map(([department, list]) => ({ department, orders: list }));
+    const departments = [...other].map(([department, list]) => ({
+      department,
+      orders: list,
+    }));
     groups.push({
       id: "other",
       label: "Other",
