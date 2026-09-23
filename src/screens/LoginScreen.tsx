@@ -58,7 +58,7 @@ export default function LoginScreen() {
           <div className="absolute inset-0 bg-gradient-to-t from-coffee-900/85 via-coffee-900/20 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-6 text-cream sm:p-10">
             <h1 className="text-3xl font-extrabold tracking-tight drop-shadow sm:text-5xl">
-              Welcome to <span className="text-brand-300">dot.coffie</span>
+              Welcome to <span className="text-brand-300">dot.coffee</span>
             </h1>
             <p className="mt-2 max-w-md text-sm text-cream/90 sm:text-lg">
               Sign in with your employee account to order your coffee or tea,

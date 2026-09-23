@@ -21,9 +21,12 @@ export default function NavBar() {
   return (
     <header className="sticky top-0 z-50 bg-brand-700/95 text-cream shadow-lg backdrop-blur">
       <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-3">
-        <Link href="/" className="flex items-center gap-2 font-extrabold tracking-tight">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-extrabold tracking-tight"
+        >
           <span className="text-xl">☕</span>
-          <span>dot.coffie</span>
+          <span>dot.coffee</span>
         </Link>
 
         <nav className="flex items-center gap-2">
