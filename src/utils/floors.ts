@@ -20,7 +20,7 @@ export const FLOORS: Floor[] = [
     id: "first",
     label: "First Floor",
     emoji: "🏬",
-    departments: ["HomeTech", "HomeDot"],
+    departments: ["HomeTech", "HomeDot", "HomeWare"],
   },
 ];
 

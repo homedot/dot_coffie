@@ -6,7 +6,7 @@ import type { Order, SugarLevel } from "@/src/utils/types";
 // Pantry-only label override — OrderScreen keeps using SUGAR_LEVELS' own
 // labels for its sugar picker, unaffected by this.
 const SUGAR_LABELS_ML: Record<SugarLevel, string> = {
-  normal: "സാധാരണ പഞ്ചസാര",
+  normal: "പഞ്ചസാര",
   low: "കുറച്ച് പഞ്ചസാര",
   without: "പഞ്ചസാര വേണ്ട",
 };
@@ -47,7 +47,6 @@ export default function OrderCard({
               fill
               sizes="224px"
               className="object-cover"
-         
             />
           ) : (
             <div
