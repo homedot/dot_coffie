@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "dot.coffie — Employee Coffee & Tea Ordering",
-  description: "Sign in, order your coffee or tea just the way you like it, and let the pantry team brew it fresh.",
+  title: "dot.coffee — Employee Coffee & Tea Ordering",
+  description:
+    "Sign in, order your coffee or tea just the way you like it, and let the pantry team brew it fresh.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
