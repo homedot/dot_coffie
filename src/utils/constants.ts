@@ -77,13 +77,13 @@ export const DRINK_OPTIONS: {
     id: "coffee",
     label: "Coffee",
     emoji: "☕",
-    description: "Freshly brewed, hot & bold",
+    description: "",
   },
   {
     id: "tea",
     label: "Tea",
     emoji: "🍵",
-    description: "Warm, soothing & aromatic",
+    description: "",
   },
 ];
 
