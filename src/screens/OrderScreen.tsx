@@ -66,6 +66,14 @@ export default function OrderScreen() {
     const result = await placeOrder(drink, sugar);
     setSubmitting(false);
     if (!result.ok) {
+      // The window can close between the last 30s refresh and this submit.
+      // Treat that as a state change, not an error — resync `now` so the
+      // view switches to the friendly closed-window panel instead of
+      // showing the raw server message as a scary red alert.
+      if (!isWithinOrderWindow()) {
+        setNow(Date.now());
+        return;
+      }
       setError(result.error);
       return;
     }
@@ -182,9 +190,13 @@ export default function OrderScreen() {
         ) : (
           <>
             {error && (
-              <p role="alert" className="mt-6 text-sm font-semibold text-red-600">
-                {error}
-              </p>
+              <div
+                role="alert"
+                className="mt-6 flex items-start gap-3 rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-800 shadow-sm"
+              >
+                <span className="text-lg leading-none">☕</span>
+                <p>{error}</p>
+              </div>
             )}
 
             <section className="mt-10">

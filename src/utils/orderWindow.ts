@@ -88,11 +88,11 @@ export function getOrderWindowFor(
 }
 
 // Safety-net checkpoints: if pantry staff forget to hit "Clear board", the
-// board auto-clears itself shortly after the morning window (12:30 PM) and
-// again after the evening window (6:00 PM), so a missed clear never blocks
-// the next round of ordering.
+// board auto-clears itself after the morning window (12:00 PM) and again
+// after the evening window (6:00 PM), so a missed clear never blocks the
+// next round of ordering.
 export const AUTO_CLEAR_CHECKPOINTS: TimeOfDay[] = [
-  { hour: 12, minute: 30 },
+  { hour: 12, minute: 0 },
   { hour: 18, minute: 0 },
 ];
 
