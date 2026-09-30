@@ -31,8 +31,22 @@ export const ORDER_WINDOWS: OrderWindow[] = [
   },
 ];
 
+// The order windows below are wall-clock times for the office (IST), but
+// `Date.getHours()`/`setHours()` read the *runtime's* local timezone — the
+// dev machine happens to be IST, so this worked locally, but Vercel's
+// serverless functions run in UTC, silently shifting every window by 5:30
+// in production. Shifting by a fixed offset and reading back with the UTC
+// getters sidesteps the runtime's local timezone entirely. IST has no DST,
+// so the offset is always 330 minutes.
+const IST_OFFSET_MINUTES = 330;
+
+function toIST(date: Date): Date {
+  return new Date(date.getTime() + IST_OFFSET_MINUTES * 60_000);
+}
+
 function minutesSinceMidnight(date: Date): number {
-  return date.getHours() * 60 + date.getMinutes();
+  const ist = toIST(date);
+  return ist.getUTCHours() * 60 + ist.getUTCMinutes();
 }
 
 function toMinutes(time: TimeOfDay): number {
@@ -101,15 +115,18 @@ export const AUTO_CLEAR_CHECKPOINTS: TimeOfDay[] = [
 export function getLastPassedCheckpoint(
   date: Date = new Date(),
 ): number | null {
-  const startOfDay = new Date(date);
-  startOfDay.setHours(0, 0, 0, 0);
+  const startOfDayIST = toIST(date);
+  startOfDayIST.setUTCHours(0, 0, 0, 0);
 
   let lastPassed: number | null = null;
   for (const checkpoint of AUTO_CLEAR_CHECKPOINTS) {
-    const checkpointTime = new Date(startOfDay);
-    checkpointTime.setHours(checkpoint.hour, checkpoint.minute, 0, 0);
-    if (date.getTime() >= checkpointTime.getTime()) {
-      lastPassed = checkpointTime.getTime();
+    const checkpointIST = new Date(startOfDayIST);
+    checkpointIST.setUTCHours(checkpoint.hour, checkpoint.minute, 0, 0);
+    // Undo the IST shift to get back a real epoch timestamp, comparable
+    // with `createdAt` (which is always an absolute epoch ms).
+    const checkpointEpoch = checkpointIST.getTime() - IST_OFFSET_MINUTES * 60_000;
+    if (date.getTime() >= checkpointEpoch) {
+      lastPassed = checkpointEpoch;
     }
   }
   return lastPassed;
