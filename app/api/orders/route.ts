@@ -5,10 +5,11 @@ import { toOrder } from "@/src/lib/orderSerializer";
 import Order from "@/src/models/Order";
 import { getSession } from "@/src/lib/auth";
 import { formatOrderWindows, isWithinOrderWindow } from "@/src/utils/orderWindow";
-import type { DrinkType, SugarLevel } from "@/src/utils/types";
+import type { DrinkType, StrengthLevel, SugarLevel } from "@/src/utils/types";
 
 const DRINK_TYPES: DrinkType[] = ["coffee", "tea"];
 const SUGAR_LEVELS: SugarLevel[] = ["normal", "low", "without"];
+const STRENGTH_LEVELS: StrengthLevel[] = ["low", "normal"];
 
 export async function GET() {
   await connectToDatabase();
@@ -35,12 +36,16 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const drink = body?.drink as DrinkType;
   const sugar = body?.sugar as SugarLevel;
+  const strength = body?.strength as StrengthLevel;
 
   if (!DRINK_TYPES.includes(drink)) {
     return NextResponse.json({ error: "Invalid drink" }, { status: 400 });
   }
   if (!SUGAR_LEVELS.includes(sugar)) {
     return NextResponse.json({ error: "Invalid sugar level" }, { status: 400 });
+  }
+  if (!STRENGTH_LEVELS.includes(strength)) {
+    return NextResponse.json({ error: "Invalid strength level" }, { status: 400 });
   }
 
   await connectToDatabase();
@@ -61,6 +66,7 @@ export async function POST(request: NextRequest) {
     employee: session,
     drink,
     sugar,
+    strength,
     status: "pending",
     createdAt: Date.now(),
   });

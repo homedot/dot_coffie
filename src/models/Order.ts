@@ -1,5 +1,12 @@
 import { Schema, model, models } from "mongoose";
-import type { AvatarPalette, DrinkType, Employee, OrderStatus, SugarLevel } from "@/src/utils/types";
+import type {
+  AvatarPalette,
+  DrinkType,
+  Employee,
+  OrderStatus,
+  StrengthLevel,
+  SugarLevel,
+} from "@/src/utils/types";
 
 const AVATAR_PALETTES: AvatarPalette[] = [
   "brand",
@@ -16,6 +23,7 @@ export interface OrderDocument {
   employee: Employee;
   drink: DrinkType;
   sugar: SugarLevel;
+  strength: StrengthLevel;
   status: OrderStatus;
   createdAt: number;
 }
@@ -37,6 +45,7 @@ const orderSchema = new Schema<OrderDocument>({
   employee: { type: employeeSchema, required: true },
   drink: { type: String, enum: ["coffee", "tea"], required: true },
   sugar: { type: String, enum: ["normal", "low", "without"], required: true },
+  strength: { type: String, enum: ["low", "normal"], required: true },
   status: {
     type: String,
     enum: ["pending", "preparing", "served"],

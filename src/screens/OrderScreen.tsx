@@ -10,9 +10,11 @@ import DrinkOptionCard from "@/src/components/DrinkOptionCard";
 import GreetingScene from "@/src/components/GreetingScene";
 import NavBar from "@/src/components/NavBar";
 import OrderStatusTracker from "@/src/components/OrderStatusTracker";
+import StrengthLevelChip from "@/src/components/StrengthLevelChip";
 import SugarLevelChip from "@/src/components/SugarLevelChip";
+import WaterRequestButton from "@/src/components/WaterRequestButton";
 import { useApp } from "@/src/context/AppContext";
-import { DRINK_OPTIONS, SUGAR_LEVELS } from "@/src/utils/constants";
+import { DRINK_OPTIONS, STRENGTH_LEVELS, SUGAR_LEVELS } from "@/src/utils/constants";
 import { IMAGES } from "@/src/utils/images";
 import {
   formatOrderWindows,
@@ -20,7 +22,7 @@ import {
   getOrderWindowFor,
   isWithinOrderWindow,
 } from "@/src/utils/orderWindow";
-import type { DrinkType, SugarLevel } from "@/src/utils/types";
+import type { DrinkType, StrengthLevel, SugarLevel } from "@/src/utils/types";
 
 const DRINK_IMAGES: Record<DrinkType, string> = {
   coffee: IMAGES.coffeeCard,
@@ -32,6 +34,7 @@ export default function OrderScreen() {
   const { employee, orders, placeOrder } = useApp();
   const [drink, setDrink] = useState<DrinkType | null>(null);
   const [sugar, setSugar] = useState<SugarLevel | null>(null);
+  const [strength, setStrength] = useState<StrengthLevel | null>(null);
   const [justPlaced, setJustPlaced] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -60,10 +63,10 @@ export default function OrderScreen() {
   const activeOrderWindow = activeOrder ? getOrderWindowFor(new Date(activeOrder.createdAt)) : null;
 
   async function handleConfirm() {
-    if (!drink || !sugar || !orderWindowOpen) return;
+    if (!drink || !sugar || !strength || !orderWindowOpen) return;
     setError(null);
     setSubmitting(true);
-    const result = await placeOrder(drink, sugar);
+    const result = await placeOrder(drink, sugar, strength);
     setSubmitting(false);
     if (!result.ok) {
       // The window can close between the last 30s refresh and this submit.
@@ -80,6 +83,7 @@ export default function OrderScreen() {
     setJustPlaced(true);
     setDrink(null);
     setSugar(null);
+    setStrength(null);
     setTimeout(() => setJustPlaced(false), 3000);
   }
 
@@ -90,6 +94,8 @@ export default function OrderScreen() {
 
       <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 px-6 py-10">
         <GreetingScene name={employee.name.split(" ")[0]} />
+
+        <WaterRequestButton />
 
         {justPlaced && (
           <div className="mt-6 flex animate-pop items-center gap-3 rounded-2xl bg-white/90 p-4 text-brand-800 shadow-lg">
@@ -233,8 +239,26 @@ export default function OrderScreen() {
               </section>
             )}
 
+            {drink && sugar && (
+              <section className="mt-8 animate-fade-up">
+                <h2 className="mb-4 text-lg font-bold text-coffee-800">3. How strong?</h2>
+                <div className="flex flex-wrap gap-3">
+                  {STRENGTH_LEVELS.map((level) => (
+                    <StrengthLevelChip
+                      key={level.id}
+                      level={level.id}
+                      emoji={level.emoji}
+                      label={level.label}
+                      selected={strength === level.id}
+                      onSelect={() => setStrength(level.id)}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
             <div className="mt-10 flex justify-center sm:justify-start">
-              <Button onClick={handleConfirm} disabled={!drink || !sugar || submitting}>
+              <Button onClick={handleConfirm} disabled={!drink || !sugar || !strength || submitting}>
                 {submitting ? "Placing order…" : "Confirm order ☕"}
               </Button>
             </div>

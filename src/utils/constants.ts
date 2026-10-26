@@ -1,4 +1,4 @@
-import type { DrinkType, Employee, SugarLevel } from "./types";
+import type { DrinkType, Employee, StrengthLevel, SugarLevel } from "./types";
 
 export const EMPLOYEES: Employee[] = [
   {
@@ -93,3 +93,12 @@ export const SUGAR_LEVELS: { id: SugarLevel; label: string; emoji: string }[] =
     { id: "low", label: "Low Sugar", emoji: "🥄" },
     { id: "without", label: "Without Sugar", emoji: "🚫" },
   ];
+
+export const STRENGTH_LEVELS: {
+  id: StrengthLevel;
+  label: string;
+  emoji: string;
+}[] = [
+  { id: "low", label: "Low", emoji: "🔥" },
+  { id: "normal", label: "Normal", emoji: "🔥🔥" },
+];

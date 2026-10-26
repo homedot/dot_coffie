@@ -8,6 +8,7 @@ import Button from "@/src/components/Button";
 import NavBar from "@/src/components/NavBar";
 import OrderCard from "@/src/components/OrderCard";
 import SugarSummary from "@/src/components/SugarSummary";
+// import WaterRequestPanel from "@/src/components/WaterRequestPanel";
 import { useApp } from "@/src/context/AppContext";
 import { groupOrdersByFloor } from "@/src/utils/floors";
 import { IMAGES } from "@/src/utils/images";
@@ -77,6 +78,8 @@ export default function PantryScreen() {
             </div>
           </div>
         </div>
+
+        {/* <WaterRequestPanel /> */}
 
         {sorted.length > 0 && (
           <div className="mt-8">

@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import jwt from "jsonwebtoken";
 import type { Employee } from "@/src/utils/types";
 
@@ -37,7 +37,13 @@ export async function clearSessionCookie() {
 
 export async function getSession(): Promise<SessionPayload | null> {
   const store = await cookies();
-  const token = store.get(COOKIE_NAME)?.value;
+  // The mobile app has no cookie jar, so it sends the token it got at
+  // login as a bearer header instead — this is the only other place a
+  // session can come from, and every route already calls getSession()
+  // rather than reading the cookie directly, so this covers them all.
+  const hdrs = await headers();
+  const bearerToken = hdrs.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
+  const token = store.get(COOKIE_NAME)?.value ?? bearerToken;
   if (!token) return null;
   try {
     const decoded = jwt.verify(token, getJwtSecret());

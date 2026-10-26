@@ -32,7 +32,11 @@ export async function POST(request: NextRequest) {
     role: user.role,
   };
 
-  await setSessionCookie(signSession(employee));
+  const token = signSession(employee);
+  await setSessionCookie(token);
 
-  return NextResponse.json({ employee });
+  // `token` is for the mobile app, which has no cookie jar — it stores
+  // this and sends it back as `Authorization: Bearer <token>`. The web
+  // client ignores it and keeps using the cookie.
+  return NextResponse.json({ employee, token });
 }

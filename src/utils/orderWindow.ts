@@ -1,7 +1,7 @@
 // Feature flag for the ordering time-window restriction below. Flip to
 // false to let employees order any time — e.g. while this feature is
 // still being tuned — without removing the rest of the logic.
-export const ORDER_WINDOW_RESTRICTION_ENABLED = true;
+export const ORDER_WINDOW_RESTRICTION_ENABLED = false;
 
 interface TimeOfDay {
   hour: number;
@@ -69,6 +69,27 @@ function formatTime({ hour, minute }: TimeOfDay): string {
   return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
 }
 
+// Water refill requests run on their own, wider window — 8:40 AM to 6:00
+// PM every day — separate from the coffee/tea ORDER_WINDOWS above.
+export const WATER_REQUEST_WINDOW: OrderWindow = {
+  label: "Water requests",
+  emoji: "💧",
+  start: { hour: 8, minute: 40 },
+  end: { hour: 18, minute: 0 },
+};
+
+export function isWithinWaterRequestWindow(date: Date = new Date()): boolean {
+  const nowMinutes = minutesSinceMidnight(date);
+  return (
+    nowMinutes >= toMinutes(WATER_REQUEST_WINDOW.start) &&
+    nowMinutes <= toMinutes(WATER_REQUEST_WINDOW.end)
+  );
+}
+
+export function formatWaterRequestWindow(): string {
+  return `${formatTime(WATER_REQUEST_WINDOW.start)}–${formatTime(WATER_REQUEST_WINDOW.end)}`;
+}
+
 export function formatOrderWindows(): string {
   return ORDER_WINDOWS.map(
     (w) => `${formatTime(w.start)}–${formatTime(w.end)}`,
@@ -124,7 +145,8 @@ export function getLastPassedCheckpoint(
     checkpointIST.setUTCHours(checkpoint.hour, checkpoint.minute, 0, 0);
     // Undo the IST shift to get back a real epoch timestamp, comparable
     // with `createdAt` (which is always an absolute epoch ms).
-    const checkpointEpoch = checkpointIST.getTime() - IST_OFFSET_MINUTES * 60_000;
+    const checkpointEpoch =
+      checkpointIST.getTime() - IST_OFFSET_MINUTES * 60_000;
     if (date.getTime() >= checkpointEpoch) {
       lastPassed = checkpointEpoch;
     }
