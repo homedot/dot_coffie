@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   // Next.js blocks cross-origin requests to dev-only assets/endpoints by
   // default — only localhost and the host `next dev` was started with are
   // allowed automatically. Testing from a phone over the LAN (e.g.
