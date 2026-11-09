@@ -1,8 +1,8 @@
 // Feature flag for the ordering time-window restriction below. Flip to
 // false to let employees order any time — e.g. while this feature is
 // still being tuned — without removing the rest of the logic.
-// export const ORDER_WINDOW_RESTRICTION_ENABLED = true;
 export const ORDER_WINDOW_RESTRICTION_ENABLED = true;
+
 interface TimeOfDay {
   hour: number;
   minute: number;
